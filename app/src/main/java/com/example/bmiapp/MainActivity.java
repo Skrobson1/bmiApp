@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             Request request = new Request.Builder()
                     .url("https://fitness-calculator.p.rapidapi.com/bmi?age="+age+"&weight="+mass+"&height="+height)
                     .get()
-                    .addHeader("X-RapidAPI-Key", "6f089759e1mshad9d0ee313c8173p110b9ejsna3f43baf66da")
+                    .addHeader("X-RapidAPI-Key", "")
                     .addHeader("X-RapidAPI-Host", "fitness-calculator.p.rapidapi.com")
                     .build();
 
