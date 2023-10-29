@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     RadioGroup sex_input;
     String sex;
-    TextView bmi_txt;
+    TextView bmi_txt, bmi_category_txt, bfp_txt, calories_txt;
     Button calculate_btn;
 
     ArrayList<JSONObject> jsonObject;
@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         calculate_btn = findViewById(R.id.calculate_btn);
         age_input = findViewById(R.id.age_input);
         sex_input = findViewById(R.id.sex_input);
+        bmi_category_txt = findViewById(R.id.bmi_category_txt);
+        bfp_txt = findViewById(R.id.bfp_txt);
+        calories_txt = findViewById(R.id.calories_txt);
 
         sex_input.setOnCheckedChangeListener((radioGroup, i) -> {
             RadioButton radioButton = findViewById(i);
@@ -57,8 +60,16 @@ public class MainActivity extends AppCompatActivity {
                 Double mass = Double.valueOf(weight_input.getText().toString().trim());
                 Double height = Double.valueOf(height_input.getText().toString().trim());
                 int age = Integer.valueOf(age_input.getText().toString().trim());
+                Log.e("Kutas", sex);
+//                if (sex == "Mężczyzna") {
+//                    sex = "male";
+//                    Log.e("Kutas", sex);
+//                } else if (sex == "Kobieta") {
+//                    sex = "female";
+//                    Log.e("Kutas", sex);
+//                }
 
-                jsonObject = getBmi(mass, height, age, sex);
+                jsonObject = getBmi(mass, height, age, sex.toLowerCase());
             });
             thread.start();
             try {
@@ -67,8 +78,16 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "xpp", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(MainActivity.this, jsonObject.toString(), Toast.LENGTH_LONG).show();
-                    String bmi = jsonObject.get(0).getJSONObject("data").getString("bmi");
-                    bmi_txt.setText(bmi);
+                    Log.d("CHUJJ", jsonObject.toString());
+                    String bmi = jsonObject.get(0).getJSONObject("info").getString("bmi");
+                    String health = jsonObject.get(0).getJSONObject("info").getString("health");
+                    bmi_category_txt.setText(health);
+                    bmi_txt.setText("BMI: "+bmi);
+                    String bfp = String.valueOf(jsonObject.get(1).getJSONObject("info").getDouble("bfp"));
+                    bfp_txt.setText("Procent tkanki tłuszczowej: "+bfp);
+                    String tdee = String.valueOf(jsonObject.get(2).getJSONObject("info").getDouble("tdee"));
+                    calories_txt.setText("Dzienne zapotrzebowanie: "+tdee+" kalorii");
+
                 }
             } catch (InterruptedException | JSONException e) {
                 throw new RuntimeException(e);
@@ -77,22 +96,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static double round(double value) {
-        int precision = 2;
-        BigDecimal bigDecimal = new BigDecimal(value);
-        bigDecimal = bigDecimal.setScale(precision, RoundingMode.HALF_UP);
-        return bigDecimal.doubleValue();
-    }
-
     public ArrayList<JSONObject> getBmi(double mass, double height, int age, String sex) {
         try {
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
-                    .url("https://fitness-calculator.p.rapidapi.com/bmi?age="+age+"&weight="+mass+"&height="+height)
+                    .url("https://mega-fitness-calculator1.p.rapidapi.com/bmi?weight="+mass+"&height="+height)
                     .get()
-                    .addHeader("X-RapidAPI-Key", "")
-                    .addHeader("X-RapidAPI-Host", "fitness-calculator.p.rapidapi.com")
+                    .addHeader("X-RapidAPI-Key", "6f089759e1mshad9d0ee313c8173p110b9ejsna3f43baf66da")
+                    .addHeader("X-RapidAPI-Host", "mega-fitness-calculator1.p.rapidapi.com")
                     .build();
 
             Response response = client.newCall(request).execute();
@@ -100,7 +112,27 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<JSONObject> ret = new ArrayList<>();
             ret.add(jsonObject1);
 
+            request = new Request.Builder()
+                    .url("https://mega-fitness-calculator1.p.rapidapi.com/bfp?weight="+mass+"&height="+height+"&age="+String.valueOf(age)+"&gender="+sex)
+                    .get()
+                    .addHeader("X-RapidAPI-Key", "6f089759e1mshad9d0ee313c8173p110b9ejsna3f43baf66da")
+                    .addHeader("X-RapidAPI-Host", "mega-fitness-calculator1.p.rapidapi.com")
+                    .build();
 
+            response = client.newCall(request).execute();
+            jsonObject1 = new JSONObject(response.body().string());
+            ret.add(jsonObject1);
+
+            request = new Request.Builder()
+                    .url("https://mega-fitness-calculator1.p.rapidapi.com/tdee?weight=81&height=172&activitylevel=ma&age=26&gender=male")
+                    .get()
+                    .addHeader("X-RapidAPI-Key", "6f089759e1mshad9d0ee313c8173p110b9ejsna3f43baf66da")
+                    .addHeader("X-RapidAPI-Host", "mega-fitness-calculator1.p.rapidapi.com")
+                    .build();
+
+            response = client.newCall(request).execute();
+            jsonObject1 = new JSONObject(response.body().string());
+            ret.add(jsonObject1);
 
             return ret;
         } catch (Exception e) {
