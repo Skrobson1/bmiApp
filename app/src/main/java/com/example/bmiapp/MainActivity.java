@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         age_input = findViewById(R.id.age_input);
         sex_input = findViewById(R.id.sex_input);
         bmi_category_txt = findViewById(R.id.bmi_category_txt);
-        bfp_txt = findViewById(R.id.bfp_txt);
-        calories_txt = findViewById(R.id.calories_txt);
+//        bfp_txt = findViewById(R.id.bfp_txt);
+//        calories_txt = findViewById(R.id.calories_txt);
 
         sex_input.setOnCheckedChangeListener((radioGroup, i) -> {
             RadioButton radioButton = findViewById(i);
@@ -77,16 +77,16 @@ public class MainActivity extends AppCompatActivity {
                 if (jsonObject == null) {
                     Toast.makeText(MainActivity.this, "xpp", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(MainActivity.this, jsonObject.toString(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(MainActivity.this, jsonObject.toString(), Toast.LENGTH_LONG).show();
                     Log.d("CHUJJ", jsonObject.toString());
                     String bmi = jsonObject.get(0).getJSONObject("info").getString("bmi");
                     String health = jsonObject.get(0).getJSONObject("info").getString("health");
                     bmi_category_txt.setText(health);
                     bmi_txt.setText("BMI: "+bmi);
-                    String bfp = String.valueOf(jsonObject.get(1).getJSONObject("info").getDouble("bfp"));
-                    bfp_txt.setText("Procent tkanki tłuszczowej: "+bfp);
-                    String tdee = String.valueOf(jsonObject.get(2).getJSONObject("info").getDouble("tdee"));
-                    calories_txt.setText("Dzienne zapotrzebowanie: "+tdee+" kalorii");
+//                    String bfp = String.valueOf(jsonObject.get(1).getJSONObject("info").getDouble("bfp"));
+//                    bfp_txt.setText("Procent tkanki tłuszczowej: "+bfp);
+//                    String tdee = String.valueOf(jsonObject.get(2).getJSONObject("info").getDouble("tdee"));
+//                    calories_txt.setText("Dzienne zapotrzebowanie: "+tdee+" kalorii");
 
                 }
             } catch (InterruptedException | JSONException e) {
